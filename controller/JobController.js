@@ -1,6 +1,7 @@
 import 'express-async-errors';
 import Job from "../model/JobModel.js";
-import mongoose from "mongoose";
+import {StatusCodes} from "http-status-codes";
+import {NotFoundError} from "../errors/CustomErrors.js";
 
 //generating id
 //global id
@@ -11,43 +12,23 @@ function genId(){
 }
 export const getAllJobs = async (req, res)=>{
     const jobs = await Job.find({});
-    res.status(200).json({jobs});
+    res.status(StatusCodes.OK).json({jobs});
 }
 export const getJob = async (req,res)=>{
-    const {id} = req.params;
-    const job = await Job.findById(id);
-    if(!job){
-        return res.status(404).json({message: `no jobs with id ${id} found`, data: job});
-    }
-    res.status(200).json({message: 'found job!', data: job});
+    const job = await Job.findById(req.params.id);
+    res.status(StatusCodes.OK).json({message: 'found job!', data: job});
 }
 export const createJobs = async (req, res)=>{
     const job = await Job.create(req.body);
-    res.status(200).json({message: 'success insert new job!', data : job});
+    res.status(StatusCodes.CREATED).json({message: 'success insert new job!', data : job});
 }
 export const updateJob = async (req, res) =>{
-    const {id} = req.params;
-    const{company, position, subdivision} = req.body;
-    if(!company || !position){
-        return res.status(400).json({message :'company and position are mandatory!', data: null});
-    }
-    const job = jobs.find(jb => jb.id == id);
-    if(!job){
-        return res.status(404).json({message: 'data not found', data:job})
-    }
-    job.company = company;
-    job.position = position;
-    job.subdivision = subdivision;
-
-    res.status(200).json({message : 'data wes diupdate', data:job});
+    const job = await Job.findByIdAndUpdate(req.params.id, req.body, {
+        new : true
+    });
+    res.status(StatusCodes.OK).json({message : 'data successfully updated', data:job});
 }
 export const deleteJob = async (req, res) =>{
-    const {id} = req.params;
-    const job = jobs.find(jb => jb.id == id);
-    if(!job){
-        return res.status(404).json({message: `no jobs with id ${id}`, data: null});
-    }
-    const newJob = jobs.filter(jb => jb.id != id);
-    jobs = [...newJob];
-    res.status(200).json({message: `data with id ${id} has been deleted`, data: job});
+    const job = await Job.findByIdAndDelete(req.params.id);
+    res.status(StatusCodes.OK).json({message: `data with id ${req.params.id} has been deleted`, data: job});
 }

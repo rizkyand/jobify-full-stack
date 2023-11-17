@@ -5,6 +5,7 @@ import express from 'express';
 import morgan from 'morgan';
 import JobRouter from "./router/JobRouter.js";
 import mongoose from "mongoose";
+import ErrorHandlerMiddleware from "./middleware/ErrorHandlerMiddleware.js";
 
 
 const app = express();
@@ -33,10 +34,7 @@ app.use('*', (req, res)=>{
 });
 
 //handling error
-app.use((err, req,res, next) =>{
-    console.log(err);
-    res.status(500).json({message: 'something went wrong'});
-});
+app.use(ErrorHandlerMiddleware);
 
 //port exe
 try {
