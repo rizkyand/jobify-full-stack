@@ -2,14 +2,20 @@ import 'express-async-errors';
 import Job from "../model/JobModel.js";
 import {StatusCodes} from "http-status-codes";
 import {NotFoundError} from "../errors/CustomErrors.js";
+import {JOB_SORT_BY, JOB_STATUS, JOB_TYPE, SUB_DIVISION} from "../utils/Constant.js";
+import redis from "../middleware/RedisMiddleware.js";
 
-//generating id
-//global id
-let cId = 0;
-function genId(){
-    let gen = cId++;
-    return gen;
+//with redis
+export const getAllJobsRedis = async (req, res)=>{
+    const allJobCache = await redis.get('allJobs');
+    if(allJobCache){
+        return res.status(StatusCodes.OK).json({jobs: JSON.parse(allJobCache)});
+    }
+    const jobs = await Job.find({});
+    await redis.set('allJobs', JSON.stringify(jobs));
+    res.status(StatusCodes.OK).json({jobs});
 }
+//without redis
 export const getAllJobs = async (req, res)=>{
     const jobs = await Job.find({});
     res.status(StatusCodes.OK).json({jobs});
@@ -31,4 +37,25 @@ export const updateJob = async (req, res) =>{
 export const deleteJob = async (req, res) =>{
     const job = await Job.findByIdAndDelete(req.params.id);
     res.status(StatusCodes.OK).json({message: `data with id ${req.params.id} has been deleted`, data: job});
+}
+
+export const getAllJobStatus = async(req, res) => {
+    const jobStatus = Object.values(JOB_STATUS);
+    res.status(StatusCodes.OK).json({message: 'success', data : jobStatus});
+}
+
+//api constant
+export const getAllJobTypes = async (req, res) => {
+    const jobTypes  = Object.values(JOB_TYPE);
+    res.status(StatusCodes.OK).json({message: 'success', data : jobTypes});
+}
+
+export const getAllSubdivision = async (req, res) => {
+    const subDivision = Object.values(SUB_DIVISION);
+    res.status(StatusCodes.OK).json({message: 'success', data : subDivision});
+}
+
+export const getJobSortingMode = async (req,res) => {
+    const sortingBy = Object.values(JOB_SORT_BY);
+    res.status(StatusCodes.OK).json({message: 'success', data : sortingBy});
 }

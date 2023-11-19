@@ -16,17 +16,7 @@ if(process.env.NODE_ENV === 'development'){
     app.use(morgan('dev'));
 }
 app.use(express.json());
-
 app.use('/api/v1/jobs', JobRouter);
-app.post('/', (req, res)=>{
-   console.log(req);
-   res.json({message : 'data received', data : req.body});
-});
-
-app.get('/', (req, res)=>{
-    res.send('Hello this is simple get API');
-});
-
 
 //for handling not found resource
 app.use('*', (req, res)=>{
