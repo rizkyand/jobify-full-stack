@@ -3,6 +3,7 @@ import {BadRequestError, NotFoundError} from "../errors/CustomErrors.js";
 import {JOB_STATUS, JOB_TYPE, SUB_DIVISION} from "../utils/Constant.js";
 import mongoose from "mongoose";
 import Job from "../model/JobModel.js";
+import User from "../model/UserModel.js";
 
 const validate = (validationContext) => {
     return [
@@ -40,3 +41,23 @@ export const validateJobParam = validate(
         if(!job) throw new NotFoundError(`no jobs with id ${val}`);
     })
 );
+
+export const validateUserRegister = validate([
+    body('name').notEmpty().withMessage('name is required'),
+    body('email').notEmpty().withMessage('email is required')
+        .isEmail().withMessage('invalid email format')
+        .custom(async (email) =>{
+            const users = await User.findOne({email});
+            if(users){
+                throw new BadRequestError('email already used!');
+            }
+        }),
+    body('password').notEmpty().withMessage('password is required')
+        .isLength({min : 8}).withMessage('password required minimal 8 character'),
+    body('lastName').notEmpty().withMessage('lastname is required')]
+);
+
+export const validateLogin = validate([
+    body('email').notEmpty().withMessage('email is required').isEmail().withMessage('invalid email format'),
+    body('password').notEmpty().withMessage('password is required'),
+]);

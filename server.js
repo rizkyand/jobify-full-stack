@@ -6,6 +6,7 @@ import morgan from 'morgan';
 import JobRouter from "./router/JobRouter.js";
 import mongoose from "mongoose";
 import ErrorHandlerMiddleware from "./middleware/ErrorHandlerMiddleware.js";
+import AuthRouter from "./router/AuthRouter.js";
 
 
 const app = express();
@@ -17,6 +18,7 @@ if(process.env.NODE_ENV === 'development'){
 }
 app.use(express.json());
 app.use('/api/v1/jobs', JobRouter);
+app.use('/api/v1/auth', AuthRouter);
 
 //for handling not found resource
 app.use('*', (req, res)=>{

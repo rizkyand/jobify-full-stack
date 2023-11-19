@@ -3,18 +3,8 @@ import Job from "../model/JobModel.js";
 import {StatusCodes} from "http-status-codes";
 import {NotFoundError} from "../errors/CustomErrors.js";
 import {JOB_SORT_BY, JOB_STATUS, JOB_TYPE, SUB_DIVISION} from "../utils/Constant.js";
-import redis from "../middleware/RedisMiddleware.js";
 
-//with redis
-export const getAllJobsRedis = async (req, res)=>{
-    const allJobCache = await redis.get('allJobs');
-    if(allJobCache){
-        return res.status(StatusCodes.OK).json({jobs: JSON.parse(allJobCache)});
-    }
-    const jobs = await Job.find({});
-    await redis.set('allJobs', JSON.stringify(jobs));
-    res.status(StatusCodes.OK).json({jobs});
-}
+
 //without redis
 export const getAllJobs = async (req, res)=>{
     const jobs = await Job.find({});
