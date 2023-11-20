@@ -7,7 +7,9 @@ import JobRouter from "./router/JobRouter.js";
 import mongoose from "mongoose";
 import ErrorHandlerMiddleware from "./middleware/ErrorHandlerMiddleware.js";
 import AuthRouter from "./router/AuthRouter.js";
-
+import {authenticateUser} from "./middleware/AuthMiddleware.js";
+import cookieParser from 'cookie-parser';
+import UserRouter from "./router/UserRouter.js";
 
 const app = express();
 const port = process.env.PORT || 5100;
@@ -16,8 +18,11 @@ const port = process.env.PORT || 5100;
 if(process.env.NODE_ENV === 'development'){
     app.use(morgan('dev'));
 }
+
+app.use(cookieParser());
 app.use(express.json());
-app.use('/api/v1/jobs', JobRouter);
+app.use('/api/v1/jobs', authenticateUser, JobRouter);
+app.use('/api/v1/users', authenticateUser,UserRouter);
 app.use('/api/v1/auth', AuthRouter);
 
 //for handling not found resource

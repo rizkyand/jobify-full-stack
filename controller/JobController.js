@@ -7,7 +7,7 @@ import {JOB_SORT_BY, JOB_STATUS, JOB_TYPE, SUB_DIVISION} from "../utils/Constant
 
 //without redis
 export const getAllJobs = async (req, res)=>{
-    const jobs = await Job.find({});
+    const jobs = await Job.find({createdBy : req.user.userId});
     res.status(StatusCodes.OK).json({jobs});
 }
 export const getJob = async (req,res)=>{
@@ -15,6 +15,7 @@ export const getJob = async (req,res)=>{
     res.status(StatusCodes.OK).json({message: 'found job!', data: job});
 }
 export const createJobs = async (req, res)=>{
+    req.body.createdBy = req.user.userId;
     const job = await Job.create(req.body);
     res.status(StatusCodes.CREATED).json({message: 'success insert new job!', data : job});
 }
