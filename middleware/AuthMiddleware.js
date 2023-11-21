@@ -1,4 +1,4 @@
-import {UnauthenticatedError} from "../errors/CustomErrors.js";
+import {UnauthenticatedError, UnauthorizedError} from "../errors/CustomErrors.js";
 import {verifyJWT} from "../utils/WebToken.js";
 
 export const authenticateUser = (req, res, next) => {
@@ -12,5 +12,12 @@ export const authenticateUser = (req, res, next) => {
         next();
     }catch (e) {
         throw new UnauthenticatedError('authentication invalid');
+    }
+}
+
+export const authenticatePermission = (...roles) => {
+    return (req, res, next) => {
+        if(!roles.includes(req.user.role)) throw new UnauthorizedError('unauthorized to access this route');
+        next();
     }
 }

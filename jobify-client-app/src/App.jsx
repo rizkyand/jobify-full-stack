@@ -1,6 +1,7 @@
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {HomeLayout, Register, Login, DashboarLayout, Landing, Error, AnotherLanding, AnotherRegister
         ,Admin, AllJob, AddJob, EditJob, Profile, Stats} from './pages';
+import {loader as dashboardLoader} from "./pages/DashboardLayout.jsx";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       {
         path: 'dashboard',
         element : <DashboarLayout/>,
+        loader : dashboardLoader,
         children : [
           {
             index :true,

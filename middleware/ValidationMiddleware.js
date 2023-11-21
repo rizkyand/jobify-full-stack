@@ -65,3 +65,16 @@ export const validateLogin = validate([
     body('email').notEmpty().withMessage('email is required').isEmail().withMessage('invalid email format'),
     body('password').notEmpty().withMessage('password is required'),
 ]);
+
+export const validateUserUpdate = validate([
+    body('name').notEmpty().withMessage('name is required'),
+    body('email').notEmpty().withMessage('email is required')
+        .isEmail().withMessage('invalid email format')
+        .custom(async (email) =>{
+            const users = await User.findOne({email});
+            if(users){
+                throw new BadRequestError('email already used!');
+            }
+        }),
+    body('lastName').notEmpty().withMessage('lastname is required')]
+);

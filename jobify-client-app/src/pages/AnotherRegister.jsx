@@ -15,10 +15,12 @@ import {
     useBreakpointValue,
     Icon, Image,
 } from '@chakra-ui/react'
-import Logo from "../component/Logo.jsx";
 import signlogo from "../assets/images/sign-up-log.svg";
 import logo from "../assets/images/logo.svg";
-import {Link} from "react-router-dom";
+import {Link, useNavigate, useNavigation} from "react-router-dom";
+import {useForm} from 'react-hook-form';
+import customFetch from "../utils/CustomFetch.js";
+import {toast} from "react-toastify";
 
 
 const avatars = [
@@ -66,6 +68,22 @@ const Blur = (props) => {
 }
 
 export default function JoinOurTeam() {
+    const {handleSubmit, register, setValue} = useForm();
+    const navigate = useNavigate();
+    const navigation = useNavigation();
+    const isSubmitting = navigation.state === 'submitting';
+    const onSubmit = async data => {
+        try {
+            const response = await customFetch.post('/auth/register', data);
+            console.log(response);
+            toast.success(response.data.msg);
+            navigate('/login');
+        }catch (err){
+            toast.error(err?.response?.data?.msg);
+            console.log(err);
+        }
+    }
+
     return (
         <Box position={'relative'}>
             <Container
@@ -165,14 +183,6 @@ export default function JoinOurTeam() {
                                 justifyContent={"flex-start"}
                             />
                         </Link>
-                        {/*<Image*/}
-                        {/*    alt={'Login Image'}*/}
-                        {/*    objectFit={'fill'}*/}
-                        {/*    src={*/}
-                        {/*        logo*/}
-                        {/*    }*/}
-                        {/*    justifyContent={"flex-start"}*/}
-                        {/*/>*/}
                         <Heading
                             color={'gray.800'}
                             lineHeight={1.1}
@@ -188,9 +198,10 @@ export default function JoinOurTeam() {
                             Navigate Your Future in the World of Web Jobs
                         </Text>
                     </Stack>
-                    <Box as={'form'} mt={10}>
+                    <Box as={'form'} mt={10} onSubmit={handleSubmit(onSubmit)}>
                         <Stack spacing={4}>
                             <Input
+                                {...register('name')}
                                 placeholder="Firstname"
                                 bg={'gray.100'}
                                 border={0}
@@ -200,8 +211,10 @@ export default function JoinOurTeam() {
                                 }}
                                 type="text"
                                 required
+                                onChange={e=> setValue('name', e.target.value)}
                             />
                             <Input
+                                {...register('lastName')}
                                 placeholder="Lastname"
                                 bg={'gray.100'}
                                 border={0}
@@ -210,8 +223,10 @@ export default function JoinOurTeam() {
                                     color: 'gray.500',
                                 }}
                                 type="text"
+                                onChange={e => setValue('lastName', e.target.value)}
                             />
                             <Input
+                                {...register('email')}
                                 placeholder="firstname@lastname.io"
                                 bg={'gray.100'}
                                 border={0}
@@ -221,18 +236,11 @@ export default function JoinOurTeam() {
                                 }}
                                 type="email"
                                 required
-                            />
-                            <Input
-                                placeholder="your phone number"
-                                bg={'gray.100'}
-                                border={0}
-                                color={'gray.500'}
-                                _placeholder={{
-                                    color: 'gray.500',
-                                }}
+                                onChange={e => setValue('email', e.target.value)}
                             />
 
                             <Input
+                                {...register('password')}
                                 placeholder="your strong passwod"
                                 bg={'gray.100'}
                                 border={0}
@@ -242,6 +250,19 @@ export default function JoinOurTeam() {
                                 }}
                                 type="password"
                                 required
+                                onChange = {e => setValue('password', e.target.value)}
+                            />
+
+                            <Input
+                                {...register('location')}
+                                placeholder="your city location"
+                                bg={'gray.100'}
+                                border={0}
+                                color={'gray.500'}
+                                _placeholder={{
+                                    color: 'gray.500',
+                                }}
+                                onChange={e => setValue('location', e.target.value)}
                             />
                             <Button fontFamily={'heading'} bg={'gray.200'} color={'gray.800'}
                                     _hover={{
@@ -251,6 +272,7 @@ export default function JoinOurTeam() {
                             </Button>
                         </Stack>
                         <Button
+                            type='submit'
                             fontFamily={'heading'}
                             mt={8}
                             w={'full'}
@@ -259,8 +281,9 @@ export default function JoinOurTeam() {
                             _hover={{
                                 bgColor: '#238d95',
                                 boxShadow: 'xl',
-                            }}>
-                            Submit
+                            }}
+                            disabled={isSubmitting}>
+                            {isSubmitting? 'Submitting' : 'Submit'}
                         </Button>
                     </Box>
                     form

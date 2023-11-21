@@ -8,9 +8,14 @@ export const getCurrentUser = async (req, res) => {
 }
 
 export const getApplicationStats = async (req, res) => {
-    res.status(StatusCodes.OK).json({msg: 'get application statistics'});
+    const user = await UserModel.countDocuments();
+    const jobs = await JobModel.countDocuments();
+    res.status(StatusCodes.OK).json({msg :'success getting stats', data: {user, jobs}});
 }
 
 export const updateUser = async (req, res) => {
-    res.status(StatusCodes.OK).json({msg: 'update user'});
+    const obj = {...req.body};
+    delete obj.password;
+    const updatedUser = await UserModel.findByIdAndUpdate(req.user.userId, obj);
+    res.status(StatusCodes.OK).json({msg: 'success update data', user: updatedUser});
 }
