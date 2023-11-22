@@ -13,7 +13,7 @@ const JobSchema = new mongoose.Schema(
         jobStatus: {
             type: String,
             enum: Object.values(JOB_STATUS),
-            default: JOB_STATUS.PENDING,
+            default: Object.values(JOB_STATUS.PENDING),
         },
         jobType: {
             type: String,

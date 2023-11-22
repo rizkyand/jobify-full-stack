@@ -14,14 +14,16 @@ import {
     AvatarGroup,
     useBreakpointValue,
     Icon, Image,
-} from '@chakra-ui/react'
+    Menu, MenuButton, MenuList, MenuItem,
+} from '@chakra-ui/react';
 import signlogo from "../assets/images/sign-up-log.svg";
 import logo from "../assets/images/logo.svg";
 import {Link, useNavigate, useNavigation} from "react-router-dom";
 import {useForm} from 'react-hook-form';
 import customFetch from "../utils/CustomFetch.js";
 import {toast} from "react-toastify";
-
+import {useEffect, useState} from "react";
+import { IoIosArrowDropdown } from "react-icons/io";
 
 const avatars = [
     {
@@ -71,7 +73,31 @@ export default function JoinOurTeam() {
     const {handleSubmit, register, setValue} = useForm();
     const navigate = useNavigate();
     const navigation = useNavigation();
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [searchHint, setSearchHint] = useState('');
+    const [locs, setLocs] = useState([]);
+    const handleMenuItemClick = (location) => {
+        setValue('location', location);
+        setSelectedLocation(location);
+    };
     const isSubmitting = navigation.state === 'submitting';
+    const getAllLocation = async () =>{
+        try {
+            const {data} = await customFetch.get('lov/location/all');
+            setLocs(data.data);
+        }catch (e) {
+            console.log(e);
+            toast.error('error getting location datas');
+        }
+    }
+    useEffect(() =>{
+        getAllLocation();
+    }, []);
+
+    const filteredLocation = searchHint === '' ? locs : locs.filter(loc =>{
+        return loc.toLowerCase().match(new RegExp(`${searchHint.toLowerCase()}`));
+    });
+
     const onSubmit = async data => {
         try {
             const response = await customFetch.post('/auth/register', data);
@@ -252,18 +278,39 @@ export default function JoinOurTeam() {
                                 required
                                 onChange = {e => setValue('password', e.target.value)}
                             />
-
-                            <Input
-                                {...register('location')}
-                                placeholder="your city location"
-                                bg={'gray.100'}
-                                border={0}
-                                color={'gray.500'}
-                                _placeholder={{
-                                    color: 'gray.500',
-                                }}
-                                onChange={e => setValue('location', e.target.value)}
-                            />
+                            <Menu>
+                                <MenuButton
+                                    as={Button}
+                                    rightIcon={<IoIosArrowDropdown/>}
+                                    bg={'gray.100'}
+                                    border={0}
+                                    color={'gray.500'}
+                                    _placeholder={{
+                                        color: 'gray.500',
+                                    }}
+                                >
+                                    {selectedLocation || 'Select your location'}
+                                </MenuButton>
+                                <MenuList maxH="150px" overflowY="auto" position='relative'>
+                                    <Input placeholder='search location'
+                                           value={searchHint}
+                                           onChange={e => setSearchHint(e.target.value)}
+                                           position = 'sticky'
+                                           top="0"
+                                           zIndex="1"
+                                    />
+                                    {filteredLocation.map((location, index) => (
+                                        <MenuItem
+                                            key={index}
+                                            onClick={() => {
+                                                handleMenuItemClick(location);
+                                            }}
+                                        >
+                                            {location}
+                                        </MenuItem>
+                                    ))}
+                                </MenuList>
+                            </Menu>
                             <Button fontFamily={'heading'} bg={'gray.200'} color={'gray.800'}
                                     _hover={{
                                         bgColor: '#2cb1bc'

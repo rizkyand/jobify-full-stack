@@ -10,6 +10,7 @@ import AuthRouter from "./router/AuthRouter.js";
 import {authenticateUser} from "./middleware/AuthMiddleware.js";
 import cookieParser from 'cookie-parser';
 import UserRouter from "./router/UserRouter.js";
+import LoVRouter from "./router/LoVRouter.js";
 
 const app = express();
 const port = process.env.PORT || 5100;
@@ -24,6 +25,7 @@ app.use(express.json());
 app.get('/api/v1/test', (req, res) => {
     res.json({ msg: 'test route' });
 });
+app.use('/api/v1/lov', LoVRouter);
 app.use('/api/v1/jobs', authenticateUser, JobRouter);
 app.use('/api/v1/users', authenticateUser,UserRouter);
 app.use('/api/v1/auth', AuthRouter);
