@@ -3,6 +3,7 @@ import Job from "../model/JobModel.js";
 import {StatusCodes} from "http-status-codes";
 import {NotFoundError} from "../errors/CustomErrors.js";
 import {JOB_SORT_BY, JOB_STATUS, JOB_TYPE, SUB_DIVISION} from "../utils/Constant.js";
+import {firstLetterOnly} from "../utils/CleansingUtil.js";
 
 
 //without redis
@@ -15,11 +16,17 @@ export const getJob = async (req,res)=>{
     res.status(StatusCodes.OK).json({message: 'found job!', data: job});
 }
 export const createJobs = async (req, res)=>{
+    const {company, position} = req.body;
+    req.body.company = firstLetterOnly(company);
+    req.body.position = firstLetterOnly(position);
     req.body.createdBy = req.user.userId;
     const job = await Job.create(req.body);
     res.status(StatusCodes.CREATED).json({message: 'success insert new job!', data : job});
 }
 export const updateJob = async (req, res) =>{
+    const {company, position} = req.body;
+    req.body.company = firstLetterOnly(company);
+    req.body.position = firstLetterOnly(position);
     const job = await Job.findByIdAndUpdate(req.params.id, req.body, {
         new : true
     });

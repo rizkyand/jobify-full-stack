@@ -1,5 +1,4 @@
 import customFetch from "./CustomFetch.js";
-import {toast} from "react-toastify";
 
 export const getJobType = async ()=> {
     try {
@@ -29,6 +28,15 @@ export const getDetailJob = async ()=> {
 export const getAllLocs = async () =>{
     try {
         const {data} = await customFetch.get('/lov/location/all');
+        return data;
+    }catch (e) {
+        console.log(e);
+    }
+}
+
+export const getAllJobs = async () => {
+    try {
+        const {data} = await customFetch.get('/jobs');
         return data;
     }catch (e) {
         console.log(e);

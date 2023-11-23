@@ -14,13 +14,15 @@ export const loader = async () =>{
         return data;
     }catch (e){
         console.log(e);
-        redirect('/');
     }
 }
 
 function DashboardLayout() {
     const navigate = useNavigate();
     const {user} = useLoaderData();
+    if(!user){
+        navigate('/login')
+    }
     const userDummy = user;
     const [showSideBar, setShowSetBar] = useState(false);
     const [isDarkTheme, setIsDarkTheme] = useState(false);

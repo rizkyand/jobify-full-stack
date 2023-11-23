@@ -19,18 +19,22 @@ import {toast} from "react-toastify";
 
 
 function AddJob() {
-    const {handleSubmit, register, setValue, reset} = useForm();
+    const {handleSubmit, register, setValue,reset} = useForm();
     const [error, setError] = useState(false);
     const {userDummy} = useDashboardContext();
     const [selectedLocation, setSelectedLocation] = useState(null);
     const [selectedJobType, setSelectedJobType] = useState(null);
     const [selectedJobDetail, setSelectedJobDetail] = useState(null);
     const [selectedJobStatus, setSelectedJobStatus] = useState('pending');
-    const [searchHint, setSearchHint] = useState('');
+    const [searchHintLocs, setSearchHintLocs] = useState('');
+    const [searchHintJobs, setSearchHintJobs] = useState('');
     const [locs, setLocs] = useState([]);
     const [jobType, setJobType] = useState([]);
     const [jobStatus, setJobStatus] = useState([]);
     const [detailJob, setDetailJob] = useState([]);
+    const [compName, setCompName] = useState('');
+    const [positionName, setPositionName] = useState('');
+
     const handleLocationClick = (location) => {
         setValue('jobLocation', location);
         setSelectedLocation(location);
@@ -63,16 +67,21 @@ function AddJob() {
         fetchData();
     },[]);
 
-    const filteredLocation = searchHint === '' ? locs : locs.filter(loc =>{
-        return loc.toLowerCase().match(new RegExp(`${searchHint.toLowerCase()}`));
+    const filteredLocation = searchHintLocs === '' ? locs : locs.filter(loc =>{
+        return loc.toLowerCase().match(new RegExp(`${searchHintLocs.toLowerCase()}`));
     });
+
+    const filteredJobDetail = searchHintJobs === '' ? detailJob : detailJob.filter(job => job.toLowerCase().match(new RegExp(`${searchHintJobs}`)));
 
     function resetAll(){
         reset();
         setSelectedJobType(null);
         setSelectedLocation(null);
         setSelectedJobDetail(null);
-        setSearchHint('');
+        setSearchHintLocs('');
+        setSearchHintJobs('');
+        setCompName('');
+        setPositionName('');
         setSelectedJobStatus('pending');
     }
 
@@ -125,8 +134,14 @@ function AddJob() {
                                 color: 'gray.500',
                             }}
                             type="text"
+                            textAlign='center'
+                            value={compName}
                             required
-                            onChange={e=> setValue('company', e.target.value)}
+                            onChange={e=> {
+                                    setValue('company', e.target.value);
+                                    setCompName(e.target.value.toUpperCase());
+                                }
+                            }
                         />
                         <Input
                             {...register('position')}
@@ -138,7 +153,12 @@ function AddJob() {
                                 color: 'gray.500',
                             }}
                             type="text"
-                            onChange={e=> setValue('position', e.target.value)}
+                            textAlign='center'
+                            value={positionName}
+                            onChange={e=> {
+                                setValue('position', e.target.value);
+                                setPositionName(e.target.value.toUpperCase());
+                            }}
                         />
                         <Menu>
                             <MenuButton
@@ -153,8 +173,15 @@ function AddJob() {
                             >
                                 {selectedJobDetail? `Detail Position: ${selectedJobDetail}` : 'Select detail job'}
                             </MenuButton>
-                            <MenuList maxH="150px" overflowY="auto" position='relative'>
-                                {detailJob.map((a, index) => (
+                            <MenuList maxH="150px" overflowY="auto">
+                                <Input placeholder='search here...'
+                                       position = 'sticky'
+                                       top="0"
+                                       zIndex="1"
+                                       value={searchHintJobs}
+                                       onChange={e => setSearchHintJobs(e.target.value)}
+                                />
+                                {filteredJobDetail.map((a, index) => (
                                     <MenuItem
                                         key={index}
                                         onClick={() => {
@@ -232,12 +259,12 @@ function AddJob() {
                                 {selectedLocation || 'Select your location'}
                             </MenuButton>
                             <MenuList maxH="150px" overflowY="auto" position='relative'>
-                                <Input placeholder='search location'
+                                <Input placeholder='search here...'
                                        position = 'sticky'
                                        top="0"
                                        zIndex="1"
-                                       value={searchHint}
-                                       onChange={e => setSearchHint(e.target.value)}
+                                       value={searchHintLocs}
+                                       onChange={e => setSearchHintLocs(e.target.value)}
                                 />
                                 {filteredLocation.map((location, index) => (
                                     <MenuItem

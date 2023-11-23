@@ -2,7 +2,7 @@ import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {HomeLayout, Register, Login, DashboarLayout, Landing, Error, AnotherLanding, AnotherRegister
         ,Admin, AllJob, AddJob, EditJob, Profile, Stats} from './pages';
 import {loader as dashboardLoader} from "./pages/DashboardLayout.jsx";
-
+import {loader as allJobsLoader} from "./pages/AllJob.jsx";
 const router = createBrowserRouter([
   {
     path: '/',
@@ -48,7 +48,8 @@ const router = createBrowserRouter([
           },
           {
             path : 'all-job',
-            element : <AllJob/>
+            element : <AllJob/>,
+            loader : allJobsLoader,
           },
           {
             path : 'profile',
