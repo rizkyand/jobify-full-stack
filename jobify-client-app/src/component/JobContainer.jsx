@@ -17,12 +17,9 @@ const JobContainer = () => {
     return (<Wrapper>
             <Grid templateColumns={"repeat(auto-fit, minmax(350px, 1fr))"}
                     gap={4}>
-                <JobCard/>
-                <JobCard/>
-                <JobCard/>
-                <JobCard/>
-                <JobCard/>
-                <JobCard/>
+                {jobs.map(jb =>{
+                    return <JobCard key={jb._id} {...jb}/>;
+                })}
             </Grid>
     </Wrapper>
     );

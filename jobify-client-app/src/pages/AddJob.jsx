@@ -16,9 +16,11 @@ import {useForm} from "react-hook-form";
 import {getJobType, getDetailJob, getJobStatus, getAllLocs} from "../utils/JobDataFetching.js";
 import customFetch from "../utils/CustomFetch.js";
 import {toast} from "react-toastify";
+import {useNavigate} from "react-router-dom";
 
 
 function AddJob() {
+    const navigate = useNavigate();
     const {handleSubmit, register, setValue,reset} = useForm();
     const [error, setError] = useState(false);
     const {userDummy} = useDashboardContext();
@@ -95,6 +97,8 @@ function AddJob() {
             toast.success('success create job!');
             setTimeout(() => {
                 resetAll();
+                navigate('/dashboard/all-job');
+
             }, 1000)
         }catch (err){
             toast.error(err?.response?.data?.msg);
