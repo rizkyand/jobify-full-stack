@@ -11,7 +11,7 @@ export const loader = async () => {
         const data = await getAllJobs();
         console.log('all jobs');
         console.log(data);
-        return {data,};
+        return {data};
     }catch (e) {
         console.log(e);
         return e;

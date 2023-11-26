@@ -3,6 +3,8 @@ import {HomeLayout, Register, Login, DashboarLayout, Landing, Error, AnotherLand
         ,Admin, AllJob, AddJob, EditJob, Profile, Stats} from './pages';
 import {loader as dashboardLoader} from "./pages/DashboardLayout.jsx";
 import {loader as allJobsLoader} from "./pages/AllJob.jsx";
+import {loader as editJobLoader} from "./pages/EditJob.jsx";
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -57,7 +59,8 @@ const router = createBrowserRouter([
           },
           {
             path : 'edit-job/:id',
-            element : <EditJob/>
+            element : <EditJob/>,
+            loader : editJobLoader,
           },
         ]
       }
